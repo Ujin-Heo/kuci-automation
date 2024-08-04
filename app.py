@@ -20,11 +20,13 @@ class PostingArticle:
         self.row_index = row_index
         self.title = title
         self.link = link
+
 #정확하게 해당 문자열만 뒤에서 지워주는 함수
 def rstrip_exact(s, suffix):
     if suffix and s.endswith(suffix):
         return s[:-len(suffix)]
     return s
+
 class Board:
     def __init__(self, title, link):
         self.title = title
@@ -48,7 +50,7 @@ class Board:
             contents = article.find_all('td')
             num = contents[0].text.strip()
             title = contents[1].find('a').text
-            link = (rstrip_exact(self.link + contents[1].find('a')['href']),"article.offset=0&articleLimit=10&totalNoticeYn=N&totalBoardNo=")
+            link = rstrip_exact(self.link + contents[1].find('a')['href'],"article.offset=0&articleLimit=10&totalNoticeYn=N&totalBoardNo=")
             date = contents[-1].text
             article_obj = Article(
                 num=num,
