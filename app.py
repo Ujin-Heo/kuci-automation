@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import gspread
 from pptx import Presentation
 from pptx.util import Pt
 import tkinter as tk
