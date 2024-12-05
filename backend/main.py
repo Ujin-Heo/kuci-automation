@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from config import app, db
 from scraper import scrape_boards
+from models import Article, Board
 
 board_infos = {
     '공지사항': ('공지사항', 'https://info.korea.ac.kr/info/board/notice_under.do'),
@@ -13,13 +14,21 @@ board_infos = {
 }
 
 # 읽기(Read)
-@app.route('/contacts', methods=['GET']) # /contacts <- end point
-def get_contacts():
-    pass
+@app.route('/boards', methods=['GET']) # /boards <- end point
+def get_boards():
+    boards = Board.query.all()
+    json_boards = list(map(lambda x:x.to_json(), boards))
+    return jsonify({'boards': json_boards}), 200
 
 # 만들기(Create)
 @app.route('/update_boards', methods=['POST'])
 def update_boards():
+
+    # 데이터베이스 초기화하기 (나중에 drop_all, create_all 대신 Flask-Migrate 코드로 바꿔보기)
+    db.session.remove()
+    db.drop_all()
+    db.create_all()
+
     try:
         scrape_boards(board_infos)
     except Exception as e:
@@ -27,15 +36,25 @@ def update_boards():
     
     return jsonify({'message': '게시판이 성공적으로 업데이트되었습니다.'}), 201
 
-# 수정하기(Update)
-@app.route('/update_contact/<int:user_id>', methods=['PATCH'])
-def update_contact(user_id):
+# 공지글 작성하기
+@app.route('/write_announcement', methods=['POST'])
+def write_announcement():
     pass
 
-# 삭제하기(Delete)
-@app.route('/delete_contact/<int:user_id>', methods=['DELETE'])
-def delete_contact(user_id):
+# PPT 생성하기
+@app.route('/make_ppt', methods=['POST']):
+def make_ppt():
     pass
+
+# # 수정하기(Update)
+# @app.route('/update_contact/<int:user_id>', methods=['PATCH'])
+# def update_contact(user_id):
+#     pass
+
+# # 삭제하기(Delete)
+# @app.route('/delete_contact/<int:user_id>', methods=['DELETE'])
+# def delete_contact(user_id):
+#     pass
 
 # main.py를 직접 실행했을 때만 아래의 코드를 실행함. import 했을 때는 실행 안 함.
 if __name__ == "__main__":

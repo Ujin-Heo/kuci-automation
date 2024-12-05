@@ -1,6 +1,5 @@
 from config import db
 
-
 # One-to-Many Relationship
 # Board - Article
  
