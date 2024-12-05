@@ -33,12 +33,17 @@ def scrape_article(article_html, board):
     title = article_contents[1].find('a').text
     link = rstrip_exact(board.link + article_contents[1].find('a')['href'],"&article.offset=0&articleLimit=10&totalNoticeYn=N&totalBoardNo=")
 
-    return Article(date, title, link, board)
+    return Article(date=date, title=title, link=link, board_id=board.id)
 
 # 게시판 하나 안의 게시글들을 스크래핑하는 함수
 def scrape_board(board_info):
-    board = Board(*board_info)
+    # board = Board(*board_info)
+    # db.session.add(board)
+
+    board_name, board_link = board_info
+    board = Board(name=board_name, link=board_link)
     db.session.add(board)
+    db.session.flush()  # Ensure the board ID is generated for the relationship
 
     soup = make_soup(board.link)
     articles_html = soup.find("tbody").find_all("tr")

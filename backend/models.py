@@ -13,6 +13,10 @@ class Board(db.Model):
     # one-to-many relationship 설정하기
     articles = db.relationship('Article', backref='board', lazy=True)
 
+    def __init__(self, name, link):
+        self.name = name
+        self.link = link
+
     def to_json(self):
         return {
             'id': self.id,
@@ -20,7 +24,7 @@ class Board(db.Model):
             'articles': [article.to_json() for article in self.articles],
         }
     
-class Article:
+class Article(db.Model):
     __tablename__ = 'articles'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -31,6 +35,12 @@ class Article:
 
     # Board에 연결해주는 Foreign key
     board_id = db.Column(db.Integer, db.ForeignKey('boards.id'), nullable=False)
+
+    def __init__(self, date, title, link, board_id):
+        self.date = date
+        self.title = title
+        self.link = link
+        self.board_id = board_id
 
     def to_json(self):
         return {

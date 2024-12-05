@@ -42,7 +42,7 @@ def write_announcement():
     pass
 
 # PPT 생성하기
-@app.route('/make_ppt', methods=['POST']):
+@app.route('/make_ppt', methods=['POST'])
 def make_ppt():
     pass
 
