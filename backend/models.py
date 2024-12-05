@@ -9,6 +9,7 @@ class Board(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
+    link = db.Column(db.String(100), unique=True, nullable=False)    
     
     # one-to-many relationship 설정하기
     articles = db.relationship('Article', backref='board', lazy=True)
