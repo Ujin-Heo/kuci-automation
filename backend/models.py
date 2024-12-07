@@ -1,5 +1,22 @@
 from config import db
 
+class MetaData(db.Model):
+    __tablename__ = 'metadata'
+
+    id = db.Column(db.Integer, primary_key=True)
+    last_updated_time = db.Column(db.DateTime, nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'lastUpdatedTime': self.last_updated_time.isoformat(),
+            'startDate': self.start_date.isoformat(),
+            'endDate': self.end_date.isoformat()
+        }
+
+
 # One-to-Many Relationship
 # Board - Article
  

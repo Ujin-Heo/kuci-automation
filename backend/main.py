@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from config import app, db
 from scraper import scrape_boards
-from models import Board
+from models import MetaData, Board, Article
 from datetime import datetime
 
 board_infos = {
@@ -34,15 +34,28 @@ def update_boards():
             400,
         )
 
-    # 2024-01-01 형태의 날짜를 2024.01.01 형태로 변환(정보대 홈피 사이트와 동일하게)
-    start_date_formatted = datetime.strptime(start_date, '%Y-%m-%d').strftime('%Y.%m.%d')
-    end_date_formatted = datetime.strptime(end_date, '%Y-%m-%d').strftime('%Y.%m.%d')
-    date_range = (start_date_formatted, end_date_formatted)
+    start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+    end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
 
-    # 데이터베이스 초기화하기 (나중에 drop_all, create_all 대신 Flask-Migrate 코드로 바꿔보기)
-    db.session.remove()
-    db.drop_all()
-    db.create_all()
+    # MetaData 저장
+    db.session.query(MetaData).delete()  # Delete all rows from MetaData (MetaData 초기화)
+    metadata = MetaData(
+        last_updated_time=datetime.now(),
+        start_date=start_date_obj,
+        end_date=end_date_obj
+    )
+    db.session.add(metadata)
+    db.session.commit()
+
+    # 2024-01-01 형태의 날짜를 2024.01.01 형태로 변환(정보대 홈피 사이트와 동일하게)
+    date_range = (
+        start_date_obj.strftime('%Y.%m.%d'),
+        end_date_obj.strftime('%Y.%m.%d')
+    )
+
+    # 데이터베이스 초기화하기(저장된 게시글, 게시판 모두 삭제)
+    db.session.query(Article).delete()
+    db.session.query(Board).delete()
 
     try:
         scrape_boards(board_infos, date_range)
