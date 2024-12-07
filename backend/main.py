@@ -17,9 +17,11 @@ board_infos = {
 # 읽기(Read)
 @app.route('/boards', methods=['GET']) # /boards <- end point
 def get_boards():
+    json_meta_data = MetaData.query.all()[0].to_json()
     boards = Board.query.all()
     json_boards = list(map(lambda x:x.to_json(), boards))
-    return jsonify({'boards': json_boards}), 200
+    return jsonify({'metaData': json_meta_data,
+                    'boards': json_boards},), 200
 
 # 만들기(Create)
 @app.route('/update_boards', methods=['POST'])
