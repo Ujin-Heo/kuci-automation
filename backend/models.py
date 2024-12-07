@@ -28,7 +28,8 @@ class Article(db.Model):
     __tablename__ = 'articles'
 
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.String(10), unique=False, nullable=True) # 날짜가 없는 상단 고정 게시물을 어떻게 처리할지 아직 미정.
+    pinned = db.Column(db.Boolean, default=False, nullable=False)
+    date = db.Column(db.String(10), unique=False, nullable=True)
     title = db.Column(db.String(100), unique=False, nullable=False)
     # content = db.Column(db.) 나중에 지피티 기능 만들 때 추가할 거임
     link = db.Column(db.String(100), unique=False, nullable=False)

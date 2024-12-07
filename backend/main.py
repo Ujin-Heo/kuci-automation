@@ -24,13 +24,24 @@ def get_boards():
 @app.route('/update_boards', methods=['POST'])
 def update_boards():
 
+    start_date = request.json.get('startDate') # get: 데이터가 없으면 None 반환
+    end_date = request.json.get('endDate')
+
+    if not start_date or not end_date:
+        return (
+            jsonify({'message': 'You must include a start date and an end date.'}),
+            400,
+        )
+    else:
+        date_range = (start_date, end_date)
+
     # 데이터베이스 초기화하기 (나중에 drop_all, create_all 대신 Flask-Migrate 코드로 바꿔보기)
     db.session.remove()
     db.drop_all()
     db.create_all()
 
     try:
-        scrape_boards(board_infos)
+        scrape_boards(board_infos, date_range)
     except Exception as e:
         return jsonify({'message': str(e)}), 400
     

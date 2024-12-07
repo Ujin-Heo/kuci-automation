@@ -22,21 +22,29 @@ def rstrip_exact(s, suffix):
     if suffix and s.endswith(suffix):
         return s[:-len(suffix)]
     return s
+
+def isInDateRange(date:str, date_range: tuple[str, str]):
+    start_date, end_date = date_range
+    return start_date <= date <= end_date
+
 #########################################################################
 
 
 # 게시글 하나의 날짜, 제목, 링크를 스크래핑하는 함수
-def scrape_article(article_html, board):
+def scrape_article(article_html, board, date_range):
     article_contents = article_html.find_all('td')
 
+    pinned = 'top-notice-bg' in article_html.get('class', [])
     date = article_contents[-1].text
-    title = article_contents[1].find('a').text
-    link = rstrip_exact(board.link + article_contents[1].find('a')['href'],"&article.offset=0&articleLimit=10&totalNoticeYn=N&totalBoardNo=")
 
-    return Article(date=date, title=title, link=link, board_id=board.id)
+    if (pinned == True or isInDateRange(date, date_range)):
+        title = article_contents[1].find('a').text
+        link = rstrip_exact(board.link + article_contents[1].find('a')['href'],"&article.offset=0&articleLimit=10&totalNoticeYn=N&totalBoardNo=")
+
+        return Article(pinned=pinned, date=date, title=title, link=link, board_id=board.id)
 
 # 게시판 하나 안의 게시글들을 스크래핑하는 함수
-def scrape_board(board_info):
+def scrape_board(board_info, date_range):
     # board = Board(*board_info)
     # db.session.add(board)
 
@@ -48,12 +56,12 @@ def scrape_board(board_info):
     soup = make_soup(board.link)
     articles_html = soup.find("tbody").find_all("tr")
 
-    articles = [scrape_article(article_html, board) for article_html in articles_html]
+    articles = [scrape_article(article_html, board, date_range) for article_html in articles_html]
     db.session.add_all(articles)
 
     db.session.commit()
     
 
-def scrape_boards(board_infos):
+def scrape_boards(board_infos, date_range):
     for board_info in board_infos.values():
-        scrape_board(board_info)
+        scrape_board(board_info, date_range)
