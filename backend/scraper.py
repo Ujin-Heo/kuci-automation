@@ -18,14 +18,26 @@ def make_soup(url):
     return BeautifulSoup(html, 'html.parser')
 
 # 정확하게 해당 문자열만 뒤에서 지워주는 함수
-def rstrip_exact(s, suffix):
-    if suffix and s.endswith(suffix):
-        return s[:-len(suffix)]
-    return s
+# def rstrip_exact(s, suffix):
+#     if suffix and s.endswith(suffix):
+#         return s[:-len(suffix)]
+#     return s
+
+def rstrip_from(s, suffix):
+    try:
+        i = s.index(suffix)
+        return s[:i]
+    except:
+        return s
 
 def isInDateRange(date:str, date_range: tuple[str, str]):
     start_date, end_date = date_range
     return start_date <= date <= end_date
+
+# 순서유지, 중복제거, None 제거
+def clean_list(input_list):
+    seen = set()
+    return [x for x in input_list if x is not None and not (x.title in seen or seen.add(x.title                                                                             ))]
 
 #########################################################################
 
@@ -39,7 +51,7 @@ def scrape_article(article_html, board, date_range):
 
     if (pinned == True or isInDateRange(date, date_range)):
         title = article_contents[1].find('a').text
-        link = rstrip_exact(board.link + article_contents[1].find('a')['href'],"&article.offset=0&articleLimit=10&totalNoticeYn=N&totalBoardNo=")
+        link = rstrip_from(board.link + article_contents[1].find('a')['href'],"&article.offset=")
 
         return Article(pinned=pinned, date=date, title=title, link=link, board_id=board.id)
     
@@ -55,17 +67,19 @@ def scrape_board(board_info, date_range):
     board = Board(name=board_name, link=board_link)
     db.session.add(board)
     db.session.flush()  # Ensure the board ID is generated for the relationship
+    
+    articles = []
+    for i in (0, 10):
+        soup = make_soup(board.link + f"?mode=list&&articleLimit=10&article.offset={i}")
+        articles_html = soup.find("tbody").find_all("tr")
+        articles_sub = [scrape_article(article_html, board, date_range) for article_html in articles_html]
+        articles.extend(articles_sub)
 
-    soup = make_soup(board.link)
-    articles_html = soup.find("tbody").find_all("tr")
-
-    articles = [scrape_article(article_html, board, date_range) for article_html in articles_html]
-    valid_articles = [article for article in articles if article is not None] # articles 리스트 안의 None 제거
+    valid_articles = clean_list(articles)
 
     db.session.add_all(valid_articles)
     db.session.commit()
     
-
 def scrape_boards(board_infos, date_range):
     for board_info in board_infos.values():
         scrape_board(board_info, date_range)

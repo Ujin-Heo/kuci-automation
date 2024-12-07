@@ -47,7 +47,7 @@ class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     pinned = db.Column(db.Boolean, default=False, nullable=False)
     date = db.Column(db.String(10), unique=False, nullable=True)
-    title = db.Column(db.String(100), unique=False, nullable=False)
+    title = db.Column(db.String(100), unique=True, nullable=False)
     # content = db.Column(db.) 나중에 지피티 기능 만들 때 추가할 거임
     link = db.Column(db.String(100), unique=False, nullable=False)
 
