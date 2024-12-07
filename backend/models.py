@@ -37,7 +37,8 @@ class Article(db.Model):
     # Board에 연결해주는 Foreign key
     board_id = db.Column(db.Integer, db.ForeignKey('boards.id'), nullable=False)
 
-    def __init__(self, date, title, link, board_id):
+    def __init__(self, pinned, date, title, link, board_id):
+        self.pinned = pinned
         self.date = date
         self.title = title
         self.link = link

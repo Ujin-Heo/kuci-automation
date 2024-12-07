@@ -1,7 +1,8 @@
 from flask import request, jsonify
 from config import app, db
 from scraper import scrape_boards
-from models import Article, Board
+from models import Board
+from datetime import datetime
 
 board_infos = {
     '공지사항': ('공지사항', 'https://info.korea.ac.kr/info/board/notice_under.do'),
@@ -32,8 +33,11 @@ def update_boards():
             jsonify({'message': 'You must include a start date and an end date.'}),
             400,
         )
-    else:
-        date_range = (start_date, end_date)
+
+    # 2024-01-01 형태의 날짜를 2024.01.01 형태로 변환(정보대 홈피 사이트와 동일하게)
+    start_date_formatted = datetime.strptime(start_date, '%Y-%m-%d').strftime('%Y.%m.%d')
+    end_date_formatted = datetime.strptime(end_date, '%Y-%m-%d').strftime('%Y.%m.%d')
+    date_range = (start_date_formatted, end_date_formatted)
 
     # 데이터베이스 초기화하기 (나중에 drop_all, create_all 대신 Flask-Migrate 코드로 바꿔보기)
     db.session.remove()

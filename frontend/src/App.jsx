@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import BoardList from './BoardList'
+import UpdateBoardsForm from './UpdateBoardsForm'
 
 function App() {
   const [boards, setBoards] = useState([])
@@ -19,28 +20,11 @@ function App() {
     }
   }
   
-  const updateBoards = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:5000/update_boards', {
-        method: 'POST',
-      })
-      
-      if (!response.ok) { // 실패했을 경우
-        const data = await response.json()
-        alert(data.message)
-      } else {
-        fetchBoards() // 업데이트된 Boards들을 표시하기 위해 새로고침함.
-      }
-    } catch (error) {
-      console.error("Error updating boards:", error)
-      alert("An error occurred while updating boards.")
-    }
-  }
-  
+
   return (
     <>
+      <UpdateBoardsForm updateCallback={fetchBoards}/>
       <BoardList boards={boards}/>
-      <button onClick={updateBoards}>Update Boards</button>
     </>
   )
 }

@@ -42,6 +42,9 @@ def scrape_article(article_html, board, date_range):
         link = rstrip_exact(board.link + article_contents[1].find('a')['href'],"&article.offset=0&articleLimit=10&totalNoticeYn=N&totalBoardNo=")
 
         return Article(pinned=pinned, date=date, title=title, link=link, board_id=board.id)
+    
+    # 고정 게시물도 아니고, 날짜 범위 안에도 들지 않는 경우
+    return None
 
 # 게시판 하나 안의 게시글들을 스크래핑하는 함수
 def scrape_board(board_info, date_range):
@@ -57,8 +60,9 @@ def scrape_board(board_info, date_range):
     articles_html = soup.find("tbody").find_all("tr")
 
     articles = [scrape_article(article_html, board, date_range) for article_html in articles_html]
-    db.session.add_all(articles)
+    valid_articles = [article for article in articles if article is not None] # articles 리스트 안의 None 제거
 
+    db.session.add_all(valid_articles)
     db.session.commit()
     
 
