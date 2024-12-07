@@ -41,6 +41,11 @@ class Board(db.Model):
             'articles': [article.to_json() for article in self.articles],
         }
     
+    def write(self, file):
+        for article in self.articles:
+            file.write(f"📌 {article.title}\n")
+            file.write(f"🔗 링크\n{article.link}\n\n")
+
 class Article(db.Model):
     __tablename__ = 'articles'
 

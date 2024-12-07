@@ -1,6 +1,7 @@
-from flask import request, jsonify
+from flask import request, jsonify, send_file
 from config import app, db
 from scraper import scrape_boards
+from writer import write_announcement
 from models import MetaData, Board, Article
 from datetime import datetime
 
@@ -67,9 +68,28 @@ def update_boards():
     return jsonify({'message': '게시판이 성공적으로 업데이트되었습니다.'}), 201
 
 # 공지글 작성하기
-@app.route('/write_announcement', methods=['POST'])
-def write_announcement():
-    pass
+@app.route('/announcement', methods=['POST'])
+def announcement():
+
+    month = request.json.get('month')
+    week = request.json.get('week')
+
+    if not month or not week:
+        return (
+            jsonify({'message': 'You must include a start date and an end date.'}),
+            400,
+        )
+
+    file_path = write_announcement(month, week)
+
+    # Send the file
+    return send_file(
+        file_path,
+        as_attachment=True,  # Ensure the file is downloaded by the client
+        download_name=f'{month}월_{week}주차_전공소식공유.txt',  # Custom filename
+        mimetype="text/plain"
+    )
+
 
 # PPT 생성하기
 @app.route('/make_ppt', methods=['POST'])
