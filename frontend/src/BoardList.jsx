@@ -21,7 +21,7 @@ const BoardList = ({boards}) => {
                                 <td>{article.title}</td>
                                 <td>{article.link}</td>
                                 <td>
-                                    <a href={article.link}><button>View</button></a>
+                                    <a href={article.link} target="_blank" rel="noopener noreferrer"><button>View</button></a>
                                 </td>
                             </tr>
                         ))}

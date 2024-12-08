@@ -42,6 +42,14 @@ function App() {
 
   return (
     <>
+      <div className="modal">
+        <h1 className='title'>전공소식공유 메이커 2.0</h1>
+        <div className='title-div'>
+          <span className='title-caption'></span>
+          <span className='title-caption'></span>
+          <span className='title-caption'>created by 교육진로국장 허우진</span>
+        </div>
+      </div>
       { hasSavedData && <div className='modal'>
           <h1 className='modal-title'>스크랩한 날짜의 범위: {startDate} ~ {endDate}</h1>
           <span className='modal-text'>last updated: {lastUpdatedTime}</span>
