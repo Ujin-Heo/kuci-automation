@@ -11,11 +11,11 @@ def write_announcement(month, week, writer):
         
         file.write("\n📢 일반공지\n")
         Board.query.filter_by(name='공지사항').first().write(file)
-        Board.query.filter_by(name='장학공지').first().write(file)
+        # Board.query.filter_by(name='장학공지').first().write(file)
 
         file.write("\n📍 행사 및 공모전\n")
-        Board.query.filter_by(name='진로정보(공모전)').first().write(file)
         Board.query.filter_by(name='행사 및 소식').first().write(file)
+        Board.query.filter_by(name='진로정보(공모전)').first().write(file)
 
         file.write("\n💼 채용 및 인턴 모집\n")
         Board.query.filter_by(name='진로정보(채용)').first().write(file)

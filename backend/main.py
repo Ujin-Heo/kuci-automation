@@ -2,6 +2,7 @@ from flask import request, jsonify, send_file, after_this_request
 from config import app, db
 from scraper import scrape_boards
 from writer import write_announcement
+from ppt_maker import make_ppt
 from models import MetaData, Board, Article
 from datetime import datetime
 import os
@@ -71,7 +72,6 @@ def update_boards():
 # 공지글 작성하기
 @app.route('/announcement', methods=['POST'])
 def announcement():
-
     month = request.json.get('month')
     week = request.json.get('week')
     writer = request.json.get('writer')
@@ -106,7 +106,35 @@ def announcement():
 # PPT 생성하기
 @app.route('/ppt', methods=['POST'])
 def ppt():
-    pass
+    month = request.json.get('month')
+    week = request.json.get('week')
+    writer = request.json.get('writer')
+
+    if not month or not week or not writer:
+        return (
+            jsonify({'message': 'You must include a start date, an end date, and a writer.'}),
+            400,
+        )
+
+    file_path = make_ppt(month, week, writer)
+
+    # 프론트엔드로 파일 보낸 후 벡엔드 서버에서는 삭제
+    @after_this_request
+    def remove_file(response):
+        try:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            app.logger.error(f"Error removing file {file_path}: {e}")
+        return response
+    
+    # Send the file
+    return send_file(
+        file_path,
+        as_attachment=True,
+        download_name=f'{month}월_{week}주차_전공소식공유.txt',
+        mimetype="text/plain" # 여기 바꾸기
+    )
 
 # # 수정하기(Update)
 # @app.route('/update_contact/<int:user_id>', methods=['PATCH'])
