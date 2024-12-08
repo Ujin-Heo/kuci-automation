@@ -98,7 +98,7 @@ def announcement():
     return send_file(
         file_path,
         as_attachment=True,  # Ensure the file is downloaded by the client
-        download_name=f'{month}월_{week}주차_전공소식공유.txt',  # Custom filename
+        # download_name=f'{month}월_{week}주차_전공소식공유.txt',  # Custom filename
         mimetype="text/plain"
     )
 
@@ -128,12 +128,12 @@ def ppt():
             app.logger.error(f"Error removing file {file_path}: {e}")
         return response
     
-    # Send the file
+    # Send the PowerPoint file
     return send_file(
         file_path,
         as_attachment=True,
-        download_name=f'{month}월_{week}주차_전공소식공유.txt',
-        mimetype="text/plain" # 여기 바꾸기
+        # download_name=f'{month}월_{week}주차_전공소식공유.pptx',
+        mimetype="application/vnd.openxmlformats-officedocument.presentationml.presentation"  # Correct MIME type for pptx
     )
 
 # # 수정하기(Update)
