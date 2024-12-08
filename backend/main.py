@@ -1,9 +1,10 @@
-from flask import request, jsonify, send_file
+from flask import request, jsonify, send_file, after_this_request
 from config import app, db
 from scraper import scrape_boards
 from writer import write_announcement
 from models import MetaData, Board, Article
 from datetime import datetime
+import os
 
 board_infos = {
     '공지사항': ('공지사항', 'https://info.korea.ac.kr/info/board/notice_under.do'),
@@ -73,15 +74,26 @@ def announcement():
 
     month = request.json.get('month')
     week = request.json.get('week')
+    writer = request.json.get('writer')
 
-    if not month or not week:
+    if not month or not week or not writer:
         return (
-            jsonify({'message': 'You must include a start date and an end date.'}),
+            jsonify({'message': 'You must include a start date, an end date, and a writer.'}),
             400,
         )
 
-    file_path = write_announcement(month, week)
+    file_path = write_announcement(month, week, writer)
 
+    # 프론트엔드로 파일 보낸 후 벡엔드 서버에서는 삭제
+    @after_this_request
+    def remove_file(response):
+        try:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            app.logger.error(f"Error removing file {file_path}: {e}")
+        return response
+    
     # Send the file
     return send_file(
         file_path,
@@ -92,8 +104,8 @@ def announcement():
 
 
 # PPT 생성하기
-@app.route('/make_ppt', methods=['POST'])
-def make_ppt():
+@app.route('/ppt', methods=['POST'])
+def ppt():
     pass
 
 # # 수정하기(Update)

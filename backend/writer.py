@@ -1,6 +1,6 @@
 from models import Board
 
-def write_announcement(month, week):
+def write_announcement(month, week, writer):
 
     file_path = f'{month}월_{week}주차_전공소식공유.txt'
 
@@ -23,5 +23,8 @@ def write_announcement(month, week):
 
         file.write("\n📘 전공 관련 교육행사\n")
         Board.query.filter_by(name='진로정보(교육)').first().write(file)
+
+        file.write(f"\n게시물 담당자: {writer}")
+        file.write(f"\n게시물 책임자: 허우진")
 
     return file_path

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import BoardList from './BoardList'
 import UpdateBoardsForm from './UpdateBoardsForm'
+import CreateResultsForm from './CreateResultsFrom'
 
 function formatDate(dateString) {
   const date = new Date(dateString);
@@ -47,6 +48,7 @@ function App() {
         </div>
       }
       <UpdateBoardsForm updateCallback={fetchBoards}/>
+      <CreateResultsForm/>
       <BoardList boards={boards}/>
     </>
   )
