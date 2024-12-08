@@ -6,6 +6,8 @@ const UpdateBoardsForm = ({updateCallback}) => {
 
     const onSubmit = async (e) => {
         e.preventDefault()
+
+        console.log("정보대 홈피 게시판을 스크래핑하는 중입니다!")
     
         const data = {
           startDate,
@@ -26,7 +28,8 @@ const UpdateBoardsForm = ({updateCallback}) => {
         } else {
           updateCallback() // fetchBoards() 업데이트된 Boards들을 표시하기 위해 새로고침함.
         }
-    
+        
+        console.log("게시판 스크래핑이 완료되었습니다!")
         // try {
               // 여기 안에 위 코드 작성
         // } catch (error) {
@@ -55,7 +58,7 @@ const UpdateBoardsForm = ({updateCallback}) => {
                     onChange={(e) => setEndDate(e.target.value)}
                 />
             </div>
-            <button type="submit">Update Boards</button>
+            <button type="submit">게시판 스크랩하기 (1분정도 소요됩니다.)</button>
         </form>
       );
 };
