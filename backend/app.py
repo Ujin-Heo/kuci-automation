@@ -4,7 +4,7 @@ from scraper import scrape_boards
 from writer import write_announcement
 from ppt_maker import make_ppt
 from models import MetaData, Board, Article
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 
 board_infos = {
@@ -45,7 +45,7 @@ def update_boards():
     # MetaData 저장
     db.session.query(MetaData).delete()  # Delete all rows from MetaData (MetaData 초기화)
     metadata = MetaData(
-        last_updated_time=datetime.now(),
+        last_updated_time=datetime.now() + timedelta(hours=9),
         start_date=start_date_obj,
         end_date=end_date_obj
     )
