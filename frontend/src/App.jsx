@@ -23,7 +23,11 @@ function App() {
 
   const fetchBoards = async () => {
     try {
+<<<<<<< HEAD
       const response = await fetch('http://127.0.0.1:5000/boards')
+=======
+      const response = await fetch('https://kuci-automation.onrender.com/boards')
+>>>>>>> origin/master
       const data = await response.json()
 
       const formattedLastUpdatedTime = formatDate(data.metaData.lastUpdatedTime);

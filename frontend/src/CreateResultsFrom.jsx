@@ -10,7 +10,11 @@ const CreateResultsForm = () => {
 
         const data = { month, week, writer };
 
+<<<<<<< HEAD
         const response = await fetch("http://127.0.0.1:5000/announcement", {
+=======
+        const response = await fetch("https://kuci-automation.onrender.com/announcement", {
+>>>>>>> origin/master
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -35,7 +39,11 @@ const CreateResultsForm = () => {
 
         const data = { month, week, writer };
 
+<<<<<<< HEAD
         const response = await fetch("http://127.0.0.1:5000/ppt", {
+=======
+        const response = await fetch("https://kuci-automation.onrender.com/ppt", {
+>>>>>>> origin/master
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
