@@ -23,7 +23,7 @@ function App() {
 
   const fetchBoards = async () => {
     try {
-      const response = await fetch('https://kuci-auto.onrender.com/boards')
+      const response = await fetch('https://kuci-automation.onrender.com/boards')
       const data = await response.json()
 
       const formattedLastUpdatedTime = formatDate(data.metaData.lastUpdatedTime);
