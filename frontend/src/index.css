@@ -1,0 +1,158 @@
+@import "reset.css";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+  color: #333;
+}
+
+#root {
+  max-width: 90%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  margin-bottom: 10px;
+  font-weight: 550;
+  font-size: 30px;
+  color: #444;
+  text-align: center;
+}
+
+.title-div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.title-caption {
+  font-size: 16px;
+  color: #888;
+  text-align: right;
+}
+
+.modal {
+  padding: 20px;
+  background-color: #eaeaea;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  margin-bottom: 10px;
+  font-size: 24px;
+  color: #444;
+}
+
+.modal-text {
+  font-size: 16px;
+  color: #888;
+}
+
+form {
+  width: 350px;
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 0.5px rgba(0,0,0,0.4) solid;
+  border-radius: 8px;
+}
+
+form div {
+  margin-bottom: 10px;
+}
+
+label {
+  font-size: 16px;
+  color: #555;
+}
+
+input[type="text"] {
+  width: 100%;
+  margin-top: 5px;
+  padding: 7px;
+  font-size: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f4f4f4;
+}
+
+input[type="date"] {
+  margin-left: 5px;
+}
+
+button {
+  margin-left: 10px;
+  margin-right: 30px;
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #888;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:last-child {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+button:first-child {
+  margin-left: 10px;
+  margin-right: 30px;
+}
+
+button:hover {
+  background-color: #666;
+}
+
+h2 {
+  margin-top: 40px;
+  margin-bottom: -10px;
+  font-size: 22px;
+  color: #444;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th, table td {
+  padding: 2px 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+table th {
+  padding: 10px;
+}
+
+table th {
+  background-color: #f4f4f4;
+  font-size: 16px;
+}
+
+table td {
+  background-color: #fafafa;
+}
+
+a {
+  color: #333;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
