@@ -3,4 +3,3 @@ git_commands.txt
 my_venv
 linux_python_setup.txt
 backend/__pycache__
-backend/instance/mydatabase.db
