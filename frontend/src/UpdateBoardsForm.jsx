@@ -14,11 +14,7 @@ const UpdateBoardsForm = ({updateCallback}) => {
           endDate
         }
     
-<<<<<<< HEAD
         const response = await fetch('http://127.0.0.1:5000/update_boards', {
-=======
-        const response = await fetch('https://kuci-automation.onrender.com/update_boards', {
->>>>>>> origin/master
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
