@@ -15,6 +15,7 @@ const UpdateBoardsForm = ({updateCallback}) => {
         }
     
         const response = await fetch('https://kuci-automation.onrender.com/update_boards', {
+          mode: 'no-cors',
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
