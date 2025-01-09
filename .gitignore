@@ -2,4 +2,5 @@ test.py
 git_commands.txt
 my_venv
 linux_python_setup.txt
-__pycache__
+backend/__pycache__
+backend/instance/mydatabase.db
