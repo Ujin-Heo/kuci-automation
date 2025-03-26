@@ -52,7 +52,7 @@ def update_boards():
     # MetaData 저장
     db.session.query(MetaData).delete()  # Delete all rows from MetaData (MetaData 초기화)
     metadata = MetaData(
-        last_updated_time=datetime.now(),# + timedelta(hours=9),
+        last_updated_time=datetime.now() + timedelta(hours=31),
         start_date=start_date_obj,
         end_date=end_date_obj
     )
