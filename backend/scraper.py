@@ -81,5 +81,5 @@ def scrape_board(board_info, date_range):
     db.session.commit()
     
 def scrape_boards(board_infos, date_range):
-    for board_info in board_infos.values():
+    for board_info in board_infos:
         scrape_board(board_info, date_range)

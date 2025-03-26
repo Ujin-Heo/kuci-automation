@@ -7,15 +7,22 @@ from models import MetaData, Board, Article
 from datetime import datetime, timedelta
 import os
 
-board_infos = {
-    '공지사항': ('공지사항', 'https://info.korea.ac.kr/info/board/notice_under.do'),
-    '장학공지': ('장학공지', 'https://info.korea.ac.kr/info/board/scholarship_under.do'),
-    '행사 및 소식': ('행사 및 소식', 'https://info.korea.ac.kr/info/board/news.do'),
-    '진로정보(채용)': ("진로정보(채용)", 'https://info.korea.ac.kr/info/board/course_job.do'),
-    '진로정보(교육)': ("진로정보(교육)", 'https://info.korea.ac.kr/info/board/course_program.do'),
-    '진로정보(인턴)': ("진로정보(인턴)", 'https://info.korea.ac.kr/info/board/course_intern.do'),
-    '진로정보(공모전)': ("진로정보(공모전)", 'https://info.korea.ac.kr/info/board/course_competition.do'),
-}
+board_infos = (
+    # 공지사항
+    ('공지사항', 'https://info.korea.ac.kr/info/board/notice_under.do'),
+    ('장학공지', 'https://info.korea.ac.kr/info/board/scholarship_under.do'),
+
+    # 행사 및 공모전
+    ('행사 및 소식', 'https://info.korea.ac.kr/info/board/news.do'),
+    ("진로정보(공모전)", 'https://info.korea.ac.kr/info/board/course_competition.do'),
+
+    # 교육행사
+    ("진로정보(교육)", 'https://info.korea.ac.kr/info/board/course_program.do'),
+
+    # 채용 및 인턴 모집
+    ("진로정보(채용)", 'https://info.korea.ac.kr/info/board/course_job.do'),
+    ("진로정보(인턴)", 'https://info.korea.ac.kr/info/board/course_intern.do'),
+)
 
 # 읽기(Read)
 @app.route('/boards', methods=['GET']) # /boards <- end point
@@ -45,7 +52,7 @@ def update_boards():
     # MetaData 저장
     db.session.query(MetaData).delete()  # Delete all rows from MetaData (MetaData 초기화)
     metadata = MetaData(
-        last_updated_time=datetime.now() + timedelta(hours=9),
+        last_updated_time=datetime.now(),# + timedelta(hours=9),
         start_date=start_date_obj,
         end_date=end_date_obj
     )
