@@ -1,12 +1,19 @@
 from flask import request, jsonify, send_file, after_this_request
 from config import app, db
-from scraper import scrape_boards
-from writer import write_announcement
-from ppt_maker import make_ppt
+
+# 내가 정의한 ORM 데이터베이스 Class들 (models.py에 정의한 것들)
 from models import MetaData, Board, Article
+
+# 내가 새로 만든 라이브러리
+from scraper import scrape_boards # 게시판 스크래핑에 사용
+from writer import write_announcement # 공지글 txt 파일 작성에 사용
+from ppt_maker import make_ppt # PPT 파일 생성에 사용 -> 2024년에는 썼으나 2025년부 현재는 카뉴제작이 피그마로 대체되어 안 씀. 추후 업데이트 예정.
+
+# 기타 유틸리티 라이브러리 (파이썬 기본 제공공)
 from datetime import datetime, timedelta
 import os
 
+# 스크래핑할 게시판 정보
 board_infos = {
     '공지사항': ('공지사항', 'https://info.korea.ac.kr/info/board/notice_under.do'),
     '장학공지': ('장학공지', 'https://info.korea.ac.kr/info/board/scholarship_under.do'),
@@ -16,6 +23,10 @@ board_infos = {
     '진로정보(인턴)': ("진로정보(인턴)", 'https://info.korea.ac.kr/info/board/course_intern.do'),
     '진로정보(공모전)': ("진로정보(공모전)", 'https://info.korea.ac.kr/info/board/course_competition.do'),
 }
+
+# @app.route('/~~~', methods=['~~~~']) -> flask 문법임
+# /~~~에는 end point의 이름이 들어감. end point는 벡엔드에서 특정 기능을 실행하는 부분의 이름이라고 보면 됨. 프론트엔드에서 이 주소로 요청을 보내면 백엔드에서 이 기능(함수)를 실행함.
+# methods=['~~~']: 이 end point로 어떤 HTTP 메소드로 요청을 보낼 수 있는지 설정함. GET(읽기), POST(쓰기), PATCH(수정하기), DELETE(삭제하기기) 등이 있음.
 
 # 읽기(Read)
 @app.route('/boards', methods=['GET']) # /boards <- end point
@@ -146,7 +157,7 @@ def ppt():
 # def delete_contact(user_id):
 #     pass
 
-# main.py를 직접 실행했을 때만 아래의 코드를 실행함. import 했을 때는 실행 안 함.
+# app.py를 직접 실행했을 때만 아래의 코드를 실행함. import 했을 때는 실행 안 함.
 if __name__ == "__main__":
     # database가 이미 생성됐는지 확인 후 없다면 생성.
     with app.app_context():
