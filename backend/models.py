@@ -81,6 +81,15 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
 
+        if MetaData.query.first() is None:
+            from datetime import datetime, date
+            meta = MetaData(
+                last_updated_time=datetime.now(),
+                start_date=date.today(),
+                end_date=date.today()
+            )
+            db.session.add(meta)
+
         # Add boards from board_infos if they don't already exist
         for name, link in board_infos:
             if not Board.query.filter_by(name=name).first():
