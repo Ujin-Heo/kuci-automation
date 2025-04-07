@@ -1,4 +1,4 @@
-from config import db
+from config import db, app
 
 class MetaData(db.Model):
     __tablename__ = 'metadata'
@@ -74,3 +74,8 @@ class Article(db.Model):
             'link': self.link,
             'board_id': self.board_id,
         }
+    
+if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+        print("Empty database 'mydatabase.db' created with tables.")
