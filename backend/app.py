@@ -1,28 +1,12 @@
 from flask import request, jsonify, send_file, after_this_request
 from config import app, db
+from board_infos import board_infos
 from scraper import scrape_boards
 from writer import write_announcement
 from ppt_maker import make_ppt
 from models import MetaData, Board, Article
 from datetime import datetime, timedelta
 import os
-
-board_infos = (
-    # 공지사항
-    ('공지사항', 'https://info.korea.ac.kr/info/board/notice_under.do'),
-    ('장학공지', 'https://info.korea.ac.kr/info/board/scholarship_under.do'),
-
-    # 행사 및 공모전
-    ('행사 및 소식', 'https://info.korea.ac.kr/info/board/news.do'),
-    ("진로정보(공모전)", 'https://info.korea.ac.kr/info/board/course_competition.do'),
-
-    # 교육행사
-    ("진로정보(교육)", 'https://info.korea.ac.kr/info/board/course_program.do'),
-
-    # 채용 및 인턴 모집
-    ("진로정보(채용)", 'https://info.korea.ac.kr/info/board/course_job.do'),
-    ("진로정보(인턴)", 'https://info.korea.ac.kr/info/board/course_intern.do'),
-)
 
 # 읽기(Read)
 @app.route('/boards', methods=['GET']) # /boards <- end point
@@ -67,7 +51,7 @@ def update_boards():
 
     # 데이터베이스 초기화하기(저장된 게시글, 게시판 모두 삭제)
     db.session.query(Article).delete()
-    db.session.query(Board).delete()
+    # db.session.query(Board).delete()
 
     try:
         scrape_boards(board_infos, date_range)

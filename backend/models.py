@@ -76,6 +76,15 @@ class Article(db.Model):
         }
     
 if __name__ == "__main__":
+    from board_infos import board_infos
+
     with app.app_context():
         db.create_all()
-        print("Empty database 'mydatabase.db' created with tables.")
+
+        # Add boards from board_infos if they don't already exist
+        for name, link in board_infos:
+            if not Board.query.filter_by(name=name).first():
+                db.session.add(Board(name=name, link=link))
+
+        db.session.commit()
+        print("Empty database 'mydatabase.db' created with tables and board entries.")

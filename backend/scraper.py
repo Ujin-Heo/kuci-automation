@@ -62,13 +62,18 @@ def scrape_article(article_html, board, date_range):
 
 # 게시판 하나 안의 게시글들을 스크래핑하는 함수
 def scrape_board(board_info, date_range):
-    # board = Board(*board_info)
-    # db.session.add(board)
-
     board_name, board_link = board_info
-    board = Board(name=board_name, link=board_link)
-    db.session.add(board)
-    db.session.flush()  # Ensure the board ID is generated for the relationship
+
+    # board_info를 바탕으로 새로운 Board 객체를 생성해서 DB에 추가
+    # board = Board(name=board_name, link=board_link)
+    # db.session.add(board)
+    # db.session.flush()  # Ensure the board ID is generated for the relationship
+
+    # DB에 이미 정의되어 있는 Board 객체 중 이름이 같은 것을 가져옴
+    board = Board.query.filter_by(name=board_name).first()
+    if not board:
+        print(f"Board '{board_name}' not found in DB. Skipping.")
+        return
     
     articles = []
     for i in (0, 10):
