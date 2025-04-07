@@ -6,11 +6,13 @@ from config import db
 # 유틸리티 함수들#####################################
 # BeautifulSoup를 위한 함수 1
 def fetch_html(url):
-    response = requests.get(url)
-    if response.status_code == 200:
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()  # raises if status is not 2xx/3xx
         return response.text
-    else:
-        raise Exception(f"Failed to fetch the URL: {url}, Status code: {response.status_code}")
+    except requests.RequestException as e:
+        print(f"Error fetching {url}: {e}")
+        return None
 
 # BeautifulSoup를 위한 함수 2
 def make_soup(url):
@@ -71,6 +73,10 @@ def scrape_board(board_info, date_range):
     articles = []
     for i in (0, 10):
         soup = make_soup(board.link + f"?mode=list&&articleLimit=10&article.offset={i}")
+        if soup is None: # fetch_html에서 에러가 나면 None을 리턴함 -> make_soup에서 None을 리턴함 -> 이 경우는 스킵함
+            print(f"Skipping offset {i} due to fetch failure.")
+            continue
+
         articles_html = soup.find("tbody").find_all("tr")
         articles_sub = [scrape_article(article_html, board, date_range) for article_html in articles_html]
         articles.extend(articles_sub)
