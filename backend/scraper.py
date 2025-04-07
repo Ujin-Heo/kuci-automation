@@ -11,7 +11,7 @@ def fetch_html(url):
         response.raise_for_status()  # raises if status is not 2xx/3xx
         return response.text
     except requests.RequestException as e:
-        print(f"Error fetching {url}: {e}")
+        print(f"!!!Error fetching {url}: {e}")
         return None
 
 # BeautifulSoup를 위한 함수 2
@@ -89,6 +89,7 @@ def scrape_board(board_info, date_range):
         articles_html = soup.find("tbody").find_all("tr")
         articles_sub = [scrape_article(article_html, board, date_range) for article_html in articles_html]
         articles.extend(articles_sub)
+        print(f"Fetched {len(articles_sub)} articles from offset {i} of {board.name}.")
 
     valid_articles = clean_list(articles)
     print(f"Fetched {len(valid_articles)} valid articles from {board.name}.")
