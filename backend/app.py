@@ -11,9 +11,12 @@ import os
 # 읽기(Read)
 @app.route('/boards', methods=['GET']) # /boards <- end point
 def get_boards():
-    json_meta_data = MetaData.query.all()[0].to_json()
+    metadata_row = MetaData.query.first()
+    json_meta_data = metadata_row.to_json() if metadata_row else None
+
     boards = Board.query.all()
-    json_boards = list(map(lambda x:x.to_json(), boards))
+    json_boards = [board.to_json() for board in boards]
+
     return jsonify({'metaData': json_meta_data,
                     'boards': json_boards},), 200
 
