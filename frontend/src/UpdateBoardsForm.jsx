@@ -25,6 +25,10 @@ const UpdateBoardsForm = ({updateCallback}) => {
         
         if (!response.ok) { // 실패했을 경우
           const data = await response.json()
+
+          updateCallback() // fetchBoards() 업데이트된 Boards들을 표시하기 위해 새로고침함.
+          console.log("게시판 스크래핑에 실패했습니다!")
+
           alert(data.message)
         } else {
           updateCallback() // fetchBoards() 업데이트된 Boards들을 표시하기 위해 새로고침함.
