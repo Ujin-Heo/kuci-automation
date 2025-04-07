@@ -7,7 +7,7 @@ from config import db
 # BeautifulSoup를 위한 함수 1
 def fetch_html(url):
     try:
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, timeout=5)
         response.raise_for_status()  # raises if status is not 2xx/3xx
         return response.text
     except requests.RequestException as e:
@@ -74,19 +74,24 @@ def scrape_board(board_info, date_range):
     if not board:
         print(f"Board '{board_name}' not found in DB. Skipping.")
         return
-    
+    else:
+        print(f"found Board '{board_name}' in DB.")
+
     articles = []
     for i in (0, 10):
         soup = make_soup(board.link + f"?mode=list&&articleLimit=10&article.offset={i}")
         if soup is None: # fetch_html에서 에러가 나면 None을 리턴함 -> make_soup에서 None을 리턴함 -> 이 경우는 스킵함
             print(f"Skipping offset {i} due to fetch failure.")
             continue
+        else:
+            print(f"Fetched offset {i} of {board.name} successfully.")
 
         articles_html = soup.find("tbody").find_all("tr")
         articles_sub = [scrape_article(article_html, board, date_range) for article_html in articles_html]
         articles.extend(articles_sub)
 
     valid_articles = clean_list(articles)
+    print(f"Fetched {len(valid_articles)} valid articles from {board.name}.")
 
     db.session.add_all(valid_articles)
     db.session.commit()
