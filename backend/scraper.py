@@ -7,11 +7,11 @@ from config import db
 # BeautifulSoup를 위한 함수 1
 def fetch_html(url):
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=10)
         response.raise_for_status()  # raises if status is not 2xx/3xx
         return response.text
     except requests.RequestException as e:
-        print(f"!!!Error fetching {url}: {e}")
+        print(f"!!!Error fetching {url} <-- {e}")
         return None
 
 # BeautifulSoup를 위한 함수 2
