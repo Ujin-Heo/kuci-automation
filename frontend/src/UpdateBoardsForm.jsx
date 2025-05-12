@@ -22,19 +22,17 @@ const UpdateBoardsForm = ({updateCallback}) => {
           },
           body: JSON.stringify(data)
         })
+
+        updateCallback() // fetchBoards() 업데이트된 Boards들을 표시하기 위해 새로고침함.
         
         if (!response.ok) { // 실패했을 경우
-          const data = await response.json()
-
-          updateCallback() // fetchBoards() 업데이트된 Boards들을 표시하기 위해 새로고침함.
           console.log("게시판 스크래핑에 실패했습니다!")
-
+          const data = await response.json()
           alert(data.message)
         } else {
-          updateCallback() // fetchBoards() 업데이트된 Boards들을 표시하기 위해 새로고침함.
+          console.log("게시판 스크래핑이 완료되었습니다!")
         }
-        
-        console.log("게시판 스크래핑이 완료되었습니다!")
+
         // try {
               // 여기 안에 위 코드 작성
         // } catch (error) {
