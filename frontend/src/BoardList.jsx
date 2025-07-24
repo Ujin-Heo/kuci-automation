@@ -10,7 +10,7 @@ const BoardList = ({boards}) => {
                         <tr>
                             <th>날짜</th>
                             <th>제목</th>
-                            <th>링크</th>
+                            {/* <th>링크</th> */}
                             <th>바로가기</th>
                         </tr>
                     </thead>
@@ -19,7 +19,7 @@ const BoardList = ({boards}) => {
                             <tr key={article.id}>
                                 <td>{article.date}</td>
                                 <td>{article.title}</td>
-                                <td>{article.link}</td>
+                                {/* <td>{article.link}</td> */}
                                 <td>
                                     <a href={article.link} target="_blank" rel="noopener noreferrer"><button>View</button></a>
                                 </td>

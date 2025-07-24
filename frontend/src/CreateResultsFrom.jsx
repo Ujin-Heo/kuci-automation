@@ -10,11 +10,14 @@ const CreateResultsForm = () => {
 
         const data = { month, week, writer };
 
-        const response = await fetch("http://127.0.0.1:5000/announcement", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        });
+        const response = await fetch(
+            `${import.meta.env.VITE_API_BASE_URL}/announcement`,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            }
+        );
 
         if (response.ok) {
             const blob = await response.blob();
@@ -35,11 +38,14 @@ const CreateResultsForm = () => {
 
         const data = { month, week, writer };
 
-        const response = await fetch("http://127.0.0.1:5000/ppt", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-        });
+        const response = await fetch(
+            `${import.meta.env.VITE_API_BASE_URL}/ppt`,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            }
+        );
 
         if (response.ok) {
             const blob = await response.blob();

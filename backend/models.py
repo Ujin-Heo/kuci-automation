@@ -1,4 +1,4 @@
-from config import db
+from config import db, app
 
 class MetaData(db.Model):
     __tablename__ = 'metadata'
@@ -74,3 +74,26 @@ class Article(db.Model):
             'link': self.link,
             'board_id': self.board_id,
         }
+    
+if __name__ == "__main__":
+    from board_infos import board_infos
+
+    with app.app_context():
+        db.create_all()
+
+        if MetaData.query.first() is None:
+            from datetime import datetime, date
+            meta = MetaData(
+                last_updated_time=datetime.now(),
+                start_date=date.today(),
+                end_date=date.today()
+            )
+            db.session.add(meta)
+
+        # Add boards from board_infos if they don't already exist
+        for name, link in board_infos:
+            if not Board.query.filter_by(name=name).first():
+                db.session.add(Board(name=name, link=link))
+
+        db.session.commit()
+        print("Empty database 'mydatabase.db' created with tables and board entries.")
