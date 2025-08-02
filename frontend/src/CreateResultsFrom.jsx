@@ -6,20 +6,25 @@ const CreateResultsForm = () => {
     const [writer, setWriter] = useState("");
 
     const downloadAnnouncement = async (e) => {
-        e.preventDefault();
+        try {
+            e.preventDefault();
 
-        const data = { month, week, writer };
+            const data = { month, week, writer };
 
-        const response = await fetch(
-            `${import.meta.env.VITE_API_BASE_URL}/announcement`,
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
+            const response = await fetch(
+                `${import.meta.env.VITE_API_BASE_URL}/announcement`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || "Unknown server error");
             }
-        );
 
-        if (response.ok) {
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
@@ -28,36 +33,8 @@ const CreateResultsForm = () => {
             document.body.appendChild(link);
             link.click();
             link.remove();
-        } else {
-            console.error("Failed to download the announcement file.");
-        }
-    };
-
-    const downloadPPT = async (e) => {
-        e.preventDefault();
-
-        const data = { month, week, writer };
-
-        const response = await fetch(
-            `${import.meta.env.VITE_API_BASE_URL}/ppt`,
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            }
-        );
-
-        if (response.ok) {
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = `${month}월_${week}주차_전공소식공유.pptx`;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-        } else {
-            console.error("Failed to download the PPT file.");
+        } catch (error) {
+            console.error("공지글을 작성하는 데 실패했습니다.:", error);
         }
     };
 
@@ -92,9 +69,6 @@ const CreateResultsForm = () => {
             </div>
             <button type="button" onClick={downloadAnnouncement}>
                 공지글 작성하기
-            </button>
-            <button type="button" onClick={downloadPPT}>
-                PPT 만들기
             </button>
         </form>
     );
