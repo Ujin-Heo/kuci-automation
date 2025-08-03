@@ -9,7 +9,7 @@ const BoardList = ({ boards }) => {
                             <tr>
                                 <th>날짜</th>
                                 <th>제목</th>
-                                {/* <th>링크</th> */}
+                                <th>본문</th>
                                 <th>바로가기</th>
                             </tr>
                         </thead>
@@ -18,7 +18,65 @@ const BoardList = ({ boards }) => {
                                 <tr key={article.id}>
                                     <td>{article.date}</td>
                                     <td>{article.title}</td>
-                                    {/* <td>{article.link}</td> */}
+                                    <td>
+                                        {article.content && (
+                                            <div>
+                                                <h3 className="article__content">
+                                                    <pre>
+                                                        <strong>개요</strong>
+                                                        {"  "}
+                                                        {
+                                                            article.content
+                                                                .subject
+                                                        }
+                                                    </pre>
+                                                </h3>
+                                                <h3 className="article__content">
+                                                    <pre>
+                                                        <strong>
+                                                            신청 기간
+                                                        </strong>
+                                                        {"  "}
+                                                        {
+                                                            article.content
+                                                                .registrationPeriodOrDeadline
+                                                        }
+                                                    </pre>
+                                                </h3>
+                                                <h3 className="article__content">
+                                                    <pre>
+                                                        <strong>
+                                                            행사 기간
+                                                        </strong>
+                                                        {"  "}
+                                                        {
+                                                            article.content
+                                                                .eventPeriodOrDate
+                                                        }
+                                                    </pre>
+                                                </h3>
+                                                <h3 className="article__content">
+                                                    <pre>
+                                                        <strong>장소</strong>
+                                                        {"  "}
+                                                        {article.content.venue}
+                                                    </pre>
+                                                </h3>
+                                                <h3 className="article__content">
+                                                    <pre>
+                                                        <strong>
+                                                            신청 방법
+                                                        </strong>
+                                                        {"  "}
+                                                        {
+                                                            article.content
+                                                                .registrationGuide
+                                                        }
+                                                    </pre>
+                                                </h3>
+                                            </div>
+                                        )}
+                                    </td>
                                     <td>
                                         <a
                                             href={article.link}

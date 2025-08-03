@@ -9,24 +9,24 @@ from ..database.db import get_board_by_name
 
 
 # 유틸리티 함수들#####################################
-# BeautifulSoup를 위한 함수 1
-def fetch_html(url: str) -> str | None:
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()  # raises if status is not 2xx/3xx
-        return response.text  # body of the response decoded as string form
-    except requests.RequestException as e:
-        print(f"다음 주소를 불러오는 데 실패함: {url} <-- {e}")
-        return None
+# # BeautifulSoup를 위한 함수 1
+# def fetch_html(url: str) -> str | None:
+#     try:
+#         response = requests.get(url, timeout=10)
+#         response.raise_for_status()  # raises if status is not 2xx/3xx
+#         return response.text  # body of the response decoded as string form
+#     except requests.RequestException as e:
+#         print(f"다음 주소를 불러오는 데 실패함: {url} <-- {e}")
+#         return None
 
 
-# BeautifulSoup를 위한 함수 2
-def make_soup(url: str) -> BeautifulSoup | None:
-    html = fetch_html(url)
-    return BeautifulSoup(html, "html.parser")
+# # BeautifulSoup를 위한 함수 2
+# def make_soup(url: str) -> BeautifulSoup | None:
+#     html = fetch_html(url)
+#     return BeautifulSoup(html, "html.parser")
 
 
-# 비동기 BeautifulSoup 생성 함수 (TODO: 예외처리 추가하기)
+# 비동기 BeautifulSoup 생성 함수
 async def make_soup_async(url: str) -> BeautifulSoup | None:
     try:
         async with httpx.AsyncClient() as client:
@@ -66,7 +66,7 @@ def clean_list(input_list: list) -> list:
 #########################################################################
 
 
-# 게시글 하나의 날짜, 제목, 링크를 스크래핑하는 함수
+# 게시물 하나의 날짜, 제목, 링크를 스크래핑하는 함수
 def scrape_article(
     article_html: Tag, board: Board, date_range: tuple[str, str]
 ) -> Article | None:
@@ -89,7 +89,7 @@ def scrape_article(
     return None
 
 
-# 게시판 하나 안의 게시글들을 스크래핑하는 함수
+# 게시판 하나 안의 게시물들을 스크래핑하는 함수
 async def scrape_board(
     board_info: tuple[str, str],
     date_range: tuple[str, str],
@@ -154,8 +154,8 @@ async def scrape_board(
         )
 
 
-def scrape_boards(
-    db: Session, board_infos: tuple[tuple[str, str], ...], date_range: tuple[str, str]
-):
-    for board_info in board_infos:
-        scrape_board(board_info, date_range, db)
+# def scrape_boards(
+#     db: Session, board_infos: tuple[tuple[str, str], ...], date_range: tuple[str, str]
+# ):
+#     for board_info in board_infos:
+#         scrape_board(board_info, date_range, db)

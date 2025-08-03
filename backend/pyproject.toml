@@ -8,6 +8,7 @@ requires-python = ">=3.12"
 dependencies = [
     "beautifulsoup4>=4.13.4",
     "fastapi[standard-no-fastapi-cloud-cli]>=0.116.1",
+    "google-genai>=1.28.0",
     "requests>=2.32.4",
     "sqlalchemy>=2.0.42",
 ]
