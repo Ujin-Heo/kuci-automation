@@ -3,11 +3,14 @@ from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
     sessionmaker,
-    Session,
     mapped_column,
     relationship,
 )
 from datetime import date, datetime
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DB_PATH = os.path.join(BASE_DIR, "database.db")
 
 
 class Base(DeclarativeBase):

@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, WebSocket
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from datetime import date
+import asyncio
 
 from ..database.models import get_db, Board, MetaData
 from ..database.db import (
@@ -12,7 +13,7 @@ from ..database.db import (
     initialize_boards,
     delete_articles,
 )
-from ..modules.scraper import scrape_boards
+from ..modules.scraper import scrape_board
 from ..modules.board_infos import board_infos
 
 
@@ -53,14 +54,49 @@ async def get_boards(db: Session = Depends(get_db)):
 
 
 # 입력된 날짜 범위의 게시글 스크랩해서 DB에 저장하기
-@router.get("/update_boards")
+# @router.get("/update_boards")
+# async def update_boards(
+#     start_date: date, end_date: date, db: Session = Depends(get_db)
+# ):
+#     try:
+#         # MetaData 저장
+#         renew_metadata(db, start_date, end_date)
+
+#         # 2024-01-01 형태의 날짜를 2024.01.01 형태로 변환(정보대 홈피 사이트와 동일하게)
+#         date_range = (
+#             start_date.strftime("%Y.%m.%d"),
+#             end_date.strftime("%Y.%m.%d"),
+#         )
+
+#         # 저장된 게시글 모두 삭제(게시판은 그대로 둠)
+#         delete_articles(db)
+
+#         # 날짜 범위 내의 게시글 새로 스크래핑
+#         scrape_boards(db, board_infos, date_range)
+
+#         return JSONResponse(
+#             content={"message": "[서버 메시지] 게시판 스크래핑에 성공하였습니다."},
+#             status_code=status.HTTP_201_CREATED,
+#         )
+
+#     except ValueError as ve:
+#         raise HTTPException(
+#             status_code=400, detail=f"[서버 메시지] 입력 값 오류: {str(ve)}"
+#         )
+#     except Exception as e:
+#         raise HTTPException(
+#             status_code=500, detail=f"[서버 메시지] 서버 오류: {str(e)}"
+#         )
+
+
+@router.websocket("/update_boards")
 async def update_boards(
-    start_date: date, end_date: date, db: Session = Depends(get_db)
+    start_date: date,
+    end_date: date,
+    websocket: WebSocket,
+    db: Session = Depends(get_db),
 ):
     try:
-        # start_date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
-        # end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
-
         # MetaData 저장
         renew_metadata(db, start_date, end_date)
 
@@ -73,19 +109,29 @@ async def update_boards(
         # 저장된 게시글 모두 삭제(게시판은 그대로 둠)
         delete_articles(db)
 
-        # 날짜 범위 내의 게시글 새로 스크래핑
-        scrape_boards(db, board_infos, date_range)
-
-        return JSONResponse(
-            content={"message": "[서버 메시지] 게시판 스크래핑에 성공하였습니다."},
-            status_code=status.HTTP_201_CREATED,
+        await websocket.accept()
+        tasks = [
+            scrape_board(board_info, date_range, db, websocket)
+            for board_info in board_infos
+        ]
+        await asyncio.gather(*tasks, return_exceptions=True)
+        await websocket.send_json(
+            {
+                "status": "done",
+                "message": "[서버 메시지] 모든 게시판 스크래핑에 성공하였습니다.",
+            }
         )
+        await websocket.close()
 
+    # TODO 에러 핸들링 수정하기 (UpdateBoardsForm.jsx도 참고)
     except ValueError as ve:
-        raise HTTPException(
-            status_code=400, detail=f"[서버 메시지] 입력 값 오류: {str(ve)}"
+        await websocket.send_json(
+            {"status": "error", "message": f"[서버 메시지] 입력 값 오류: {str(ve)}"}
         )
+        await websocket.close()
+
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"[서버 메시지] 서버 오류: {str(e)}"
+        await websocket.send_json(
+            {"status": "error", "message": f"[서버 메시지] 서버 오류: {str(e)}"}
         )
+        await websocket.close()
