@@ -1,4 +1,31 @@
-const BoardList = ({ boards }) => {
+const BoardList = ({ boards, updateCallback }) => {
+    const handleAISummaryBtnClick = async (articleId, articleTitle) => {
+        try {
+            console.log(`다음 게시물을 요약하는 중입니다.: ${articleTitle}`);
+
+            const response = await fetch(
+                `${
+                    import.meta.env.VITE_API_BASE_URL
+                }/summarize_article/${articleId}`
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || "Unknown server error");
+            }
+
+            const data = await response.json();
+            console.log(data.message);
+
+            updateCallback();
+        } catch (error) {
+            console.error(
+                `다음 게시물을 요약하는 데 실패했습니다.: ${articleTitle}`,
+                error
+            );
+        }
+    };
+
     return (
         <div>
             {boards.map((board) => (
@@ -10,7 +37,7 @@ const BoardList = ({ boards }) => {
                                 <th>날짜</th>
                                 <th>제목</th>
                                 <th>본문</th>
-                                <th>바로가기</th>
+                                <th>버튼</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,8 +110,19 @@ const BoardList = ({ boards }) => {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                         >
-                                            <button>View</button>
+                                            <button>바로가기</button>
                                         </a>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handleAISummaryBtnClick(
+                                                    article.id,
+                                                    article.title
+                                                )
+                                            }
+                                        >
+                                            AI 요약
+                                        </button>
                                     </td>
                                 </tr>
                             ))}

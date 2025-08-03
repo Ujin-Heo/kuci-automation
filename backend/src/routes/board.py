@@ -15,7 +15,7 @@ from ..database.db import (
 )
 from ..modules.scraper import scrape_board
 from ..modules.board_infos import board_infos
-from ..modules.ai_summarizer import summarize_and_save_to_db
+from ..modules.ai_summarizer import summarize_and_save_to_db_ws
 
 
 router = APIRouter()
@@ -31,7 +31,7 @@ async def initialize(db: Session = Depends(get_db)):
         return {"message": "[서버 메시지] DB를 성공적으로 초기화했습니다."}
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"서버 오류: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"[⚠️ 서버 오류] {str(e)}")
 
 
 # DB에 저장된 게시판/게시물 데이터 불러오기
@@ -51,7 +51,7 @@ async def get_boards(db: Session = Depends(get_db)):
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"서버 오류: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"[⚠️ 서버 오류] {str(e)}")
 
 
 @router.websocket("/update_boards")
@@ -97,49 +97,6 @@ async def update_boards(
 
     except Exception as e:
         await websocket.send_json(
-            {"status": "error", "message": f"[서버 메시지] 서버 오류: {str(e)}"}
-        )
-        await websocket.close()
-
-
-@router.websocket("/summarize")
-async def summarize(websocket: WebSocket, db: Session = Depends(get_db)):
-    try:
-        await websocket.accept()
-        boards_to_summarize = get_boards_by_names(
-            db,
-            [
-                "공지사항",
-                "행사 및 소식",
-                "진로정보(공모전)",
-                "진로정보(교육)",
-            ],
-        )
-
-        tasks = [
-            summarize_and_save_to_db(article, db, websocket)
-            for board in boards_to_summarize
-            for article in board.articles
-        ]
-        await asyncio.gather(*tasks, return_exceptions=True)
-
-        await websocket.send_json(
-            {
-                "status": "done",
-                "message": "[서버 메시지] 모든 게시물 요약을 완료하였습니다.",
-            }
-        )
-        await websocket.close()
-
-    # summarize_and_save_to_db 호출 이전 과정에서 에러가 발생하면 아래에서 예외처리됨
-    except ValueError as ve:
-        await websocket.send_json(
-            {"status": "error", "message": f"[서버 메시지] 입력 값 오류: {str(ve)}"}
-        )
-        await websocket.close()
-
-    except Exception as e:
-        await websocket.send_json(
-            {"status": "error", "message": f"[서버 메시지] 서버 오류: {str(e)}"}
+            {"status": "error", "message": f"[서버 메시지] [⚠️ 서버 오류] {str(e)}"}
         )
         await websocket.close()

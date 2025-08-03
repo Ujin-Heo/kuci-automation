@@ -43,7 +43,7 @@ async def announcement(
 
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"[서버 메시지] 서버 오류: {str(e)}"
+            status_code=500, detail=f"[서버 메시지] [⚠️ 서버 오류] {str(e)}"
         )
 
 

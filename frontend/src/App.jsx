@@ -103,7 +103,7 @@ function App() {
             )}
             <UpdateBoardsForm updateCallback={fetchBoards} />
             <CreateResultsForm />
-            <BoardList boards={boards} />
+            <BoardList boards={boards} updateCallback={fetchBoards} />
         </>
     );
 }

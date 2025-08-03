@@ -1,4 +1,4 @@
-from fastapi import WebSocket
+from fastapi import WebSocket, HTTPException
 from sqlalchemy.orm import Session
 from typing import Any
 from google import genai
@@ -93,7 +93,9 @@ async def summarize_with_ai(article_content: str) -> dict[str, Any]:
         }
 
 
-async def summarize_and_save_to_db(article: Article, db: Session, websocket: WebSocket):
+async def summarize_and_save_to_db_ws(
+    article: Article, db: Session, websocket: WebSocket
+):
     try:
         article_soup = await make_soup_async(article.link)
         content_tags = (
@@ -123,6 +125,30 @@ async def summarize_and_save_to_db(article: Article, db: Session, websocket: Web
             {
                 "article": article.title,
                 "status": "error",
-                "message": f"[서버 메시지] '{article.title}' 게시물에서 오류 발생: {str(e)}",
+                "message": f"[⚠️ 서버 오류] '{article.title}' 게시물에서 오류 발생: {str(e)}",
             }
+        )
+
+
+async def summarize_and_save_to_db(article: Article, db: Session):
+    try:
+        article_soup = await make_soup_async(article.link)
+        content_tags = (
+            article_soup.select(".article-text")[0]
+            .select(".fr-view")[0]
+            .find_all(["div", "p"])
+        )
+        article_content = "".join(
+            f"{tag.text}\n" for tag in content_tags if tag.text != ""
+        )
+        summary_data: dict = await summarize_with_ai(article_content)
+
+        article.content = summary_data
+        db.commit()
+
+    except Exception as e:
+        print(f"Error summarizing article {article.title}: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"[⚠️ 서버 오류] '{article.title}' 게시물에서 오류 발생: {str(e)}",
         )
