@@ -47,18 +47,14 @@ function App() {
                 setLastUpdatedTime(formattedLastUpdatedTime);
             }
 
-            if (
-                startDate !== null &&
-                endDate !== null &&
-                lastUpdatedTime !== null
-            )
+            if (startDate !== "" && endDate !== "" && lastUpdatedTime !== "")
                 setHasSavedData(true);
 
             setBoards(data.boards);
 
-            // console.log(data.message); // [서버 메시지] 게시글을 성공적으로 불러왔습니다. <- 이건데 성가셔서 일단 꺼놓음
+            // console.log(data.message); // [서버 메시지] 게시물을 성공적으로 불러왔습니다. <- 이건데 성가셔서 일단 꺼놓음
         } catch (error) {
-            console.error("게시글을 불러오는 데 실패했습니다.:", error);
+            console.error("게시물을 불러오는 데 실패했습니다.:", error);
         }
     };
 

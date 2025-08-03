@@ -44,6 +44,11 @@ def get_board_by_name(db: Session, name: str):
     return db.scalars(stmt).first()
 
 
+def get_boards_by_names(db: Session, names: list[str]) -> list[Board]:
+    stmt = select(Board).where(Board.name.in_(names))
+    return db.scalars(stmt).all()
+
+
 def get_all_boards(db: Session):
     stmt = select(Board)
     return db.scalars(stmt)
@@ -58,7 +63,8 @@ def delete_boards(db: Session):
 
 
 def initialize_boards(db: Session):
-    delete_boards(db)
+    db.execute(delete(Board))
+    db.execute(delete(Article))
     for name, link in board_infos:
         db.add(Board(name=name, link=link))
     db.commit()
