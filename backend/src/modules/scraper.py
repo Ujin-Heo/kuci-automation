@@ -1,4 +1,6 @@
 import requests
+import httpx
+from fastapi import WebSocket
 from bs4 import BeautifulSoup, Tag
 from sqlalchemy.orm import Session
 
@@ -19,9 +21,21 @@ def fetch_html(url: str) -> str | None:
 
 
 # BeautifulSoup를 위한 함수 2
-def make_soup(url: str) -> BeautifulSoup:
+def make_soup(url: str) -> BeautifulSoup | None:
     html = fetch_html(url)
     return BeautifulSoup(html, "html.parser")
+
+
+# 비동기 BeautifulSoup 생성 함수 (TODO: 예외처리 추가하기)
+async def make_soup_async(url: str) -> BeautifulSoup | None:
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, timeout=10)
+            response.raise_for_status()
+            return BeautifulSoup(response.text, "html.parser")
+    except httpx.RequestError as e:
+        print(f"다음 주소를 비동기로 불러오는 데 실패함: {url} <-- {e}")
+        return None
 
 
 # 접미사 제거하는 함수
@@ -76,41 +90,68 @@ def scrape_article(
 
 
 # 게시판 하나 안의 게시글들을 스크래핑하는 함수
-def scrape_board(board_info: tuple[str, str], date_range: tuple[str, str], db: Session):
+async def scrape_board(
+    board_info: tuple[str, str],
+    date_range: tuple[str, str],
+    db: Session,
+    websocket: WebSocket,
+):
     board_name, _ = board_info  # _ is board_link
-
-    # DB에 이미 정의되어 있는 Board 객체 중 이름이 같은 것을 가져옴
-    board = get_board_by_name(db, board_name)
-    if not board:
-        print(f"Board '{board_name}' not found in DB. Skipping.")
-        return
-    else:
-        print(f"found Board '{board_name}' in DB.")
-
-    articles = []
-    for i in (0, 10):
-        soup = make_soup(board.link + f"?mode=list&&articleLimit=10&article.offset={i}")
-        if (
-            soup is None
-        ):  # fetch_html에서 에러가 나면 None을 리턴함 -> make_soup에서 None을 리턴함 -> 이 경우는 스킵함
-            print(f"Skipping offset {i} due to fetch failure.")
-            continue
+    try:
+        # DB에 이미 정의되어 있는 Board 객체 중 이름이 같은 것을 가져옴
+        board = get_board_by_name(db, board_name)
+        if not board:
+            print(f"Board '{board_name}' not found in DB. Skipping.")
+            return
         else:
-            print(f"Fetched offset {i} of {board.name} successfully.")
+            print(f"found Board '{board_name}' in DB.")
 
-        articles_html = soup.find("tbody").find_all("tr")
-        articles_sub = [
-            scrape_article(article_html, board, date_range)
-            for article_html in articles_html
-        ]
-        articles.extend(articles_sub)
-        print(f"Fetched {len(articles_sub)} articles from offset {i} of {board.name}.")
+        articles = []
+        for i in (0, 10):
+            soup = await make_soup_async(
+                board.link + f"?mode=list&&articleLimit=10&article.offset={i}"
+            )
+            if (
+                soup is None
+            ):  # fetch_html에서 에러가 나면 None을 리턴함 -> make_soup에서 None을 리턴함 -> 이 경우는 스킵함
+                print(f"Skipping offset {i} due to fetch failure.")
+                continue
+            else:
+                print(f"Fetched offset {i} of {board.name} successfully.")
 
-    valid_articles = clean_list(articles)
-    print(f"Fetched {len(valid_articles)} valid articles from {board.name}.")
+            articles_html = soup.find("tbody").find_all("tr")
+            articles_sub = [
+                scrape_article(article_html, board, date_range)
+                for article_html in articles_html
+            ]
+            articles.extend(articles_sub)
+            print(
+                f"Fetched {len(articles_sub)} articles from offset {i} of {board.name}."
+            )
 
-    db.add_all(valid_articles)
-    db.commit()
+        valid_articles = clean_list(articles)
+        print(f"Fetched {len(valid_articles)} valid articles from {board.name}.")
+
+        db.add_all(valid_articles)
+        db.commit()
+
+        await websocket.send_json(
+            {
+                "board": board_name,
+                "status": "success",
+                "message": f"[서버 메시지] '{board_name}' 게시판을 스크래핑 완료함",
+            }
+        )
+
+    except Exception as e:
+        print(f"Error scraping board '{board_name}': {e}")
+        await websocket.send_json(
+            {
+                "board": board_name,
+                "status": "error",
+                "message": f"[서버 메시지] '{board_name}' 게시판에서 오류 발생: {str(e)}",
+            }
+        )
 
 
 def scrape_boards(
