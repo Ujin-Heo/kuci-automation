@@ -57,7 +57,7 @@ const UpdateBoardsForm = ({ updateCallback }) => {
 
         try {
             console.log(
-                "다음 게시판의 게시물을 요약하여 불러오는 중입니다.: 행사 및 소식, 진로정보(공모전), 진로정보(교육)"
+                "다음 게시판의 게시물을 요약하여 불러오는 중입니다.: 공지사항, 행사 및 소식, 진로정보(공모전), 진로정보(교육), 진로정보(채용), 진로정보(인턴)"
             );
 
             const socket = new WebSocket(

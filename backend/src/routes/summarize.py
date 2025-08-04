@@ -23,6 +23,8 @@ async def summarize(websocket: WebSocket, db: Session = Depends(get_db)):
                 "행사 및 소식",
                 "진로정보(공모전)",
                 "진로정보(교육)",
+                "진로정보(채용)",
+                "진로정보(인턴)",
             ],
         )
 
