@@ -85,9 +85,7 @@ python-multipart==0.0.20
 pyyaml==6.0.2
     # via uvicorn
 requests==2.32.4
-    # via
-    #   backend (pyproject.toml)
-    #   google-genai
+    # via google-genai
 rich==14.1.0
     # via
     #   rich-toolkit

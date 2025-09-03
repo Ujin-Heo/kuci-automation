@@ -33,7 +33,6 @@ dependencies = [
     { name = "beautifulsoup4" },
     { name = "fastapi", extra = ["standard-no-fastapi-cloud-cli"] },
     { name = "google-genai" },
-    { name = "requests" },
     { name = "sqlalchemy" },
 ]
 
@@ -42,7 +41,6 @@ requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.13.4" },
     { name = "fastapi", extras = ["standard-no-fastapi-cloud-cli"], specifier = ">=0.116.1" },
     { name = "google-genai", specifier = ">=1.28.0" },
-    { name = "requests", specifier = ">=2.32.4" },
     { name = "sqlalchemy", specifier = ">=2.0.42" },
 ]
 
