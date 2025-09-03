@@ -65,7 +65,7 @@ async def summarize(websocket: WebSocket, db: Session = Depends(get_db)):
 
 
 @router.get("/summarize_article/{article_id}")
-async def summarize(article_id: int, db: Session = Depends(get_db)):
+async def summarize_article(article_id: int, db: Session = Depends(get_db)):
     try:
         article = db.get(Article, article_id)
         await summarize_and_save_to_db(article, db)

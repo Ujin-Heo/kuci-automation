@@ -30,7 +30,7 @@ from ..database.db import get_board_by_name
 async def make_soup_async(url: str) -> BeautifulSoup | None:
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(url, timeout=10)
+            response = await client.get(url, timeout=30)
             response.raise_for_status()
             return BeautifulSoup(response.text, "html.parser")
     except httpx.RequestError as e:
